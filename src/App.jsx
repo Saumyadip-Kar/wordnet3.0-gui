@@ -11,6 +11,8 @@ import DefinitionList from "./components/DefinitionList";
 import ThemeToggle from "./components/ThemeToggle";
 import Header from './components/Header';
 
+
+
 function App() {
     const [word, setWord] = useState("");
     const [wordInfo, setWordInfo] = useState([]);  // ✅ Initialize as an empty array
@@ -19,15 +21,18 @@ function App() {
     const [nodes_len, setNodesLen] = useState(0);
     const [edges_len, setEdgesLen] = useState(0);
     const [infoType, setInfoType] = useState("all-info");
+  
 
     return (
         <div className="w-full h-full mx-auto flex-1 bg-gradient-to-br from-gray-900 via-blue-900 to-gray-800 text-white">
             <div className="w-full h-full mx-auto">
-            <Header info={wordInfo} infoType={infoType} setInfoType={setInfoType} setWordInfo={setWordInfo} setNodesLen={setNodesLen} setEdgesLen={setEdgesLen} treeInfo={treeInfo} setTreeInfo={setTreeInfo}/>
+            {/* {loading && <Spinner />} */}
+            
+            <Header info={wordInfo} infoType={infoType} setInfoType={setInfoType} setWordInfo={setWordInfo} setNodesLen={setNodesLen} setEdgesLen={setEdgesLen} treeInfo={treeInfo} setTreeInfo={setTreeInfo} />
 
 
                 {/* Search Bar */}
-                <SearchBar setWord={setWord} word={word} setWordInfo={setWordInfo} setInfoType={setInfoType} setElements={setElements} setNodesLen={setNodesLen} setEdgesLen={setEdgesLen}/>
+                <SearchBar setWord={setWord} word={word} setWordInfo={setWordInfo} setInfoType={setInfoType} setElements={setElements} setNodesLen={setNodesLen} setEdgesLen={setEdgesLen} />
 
                 {/* Layout Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6 ">

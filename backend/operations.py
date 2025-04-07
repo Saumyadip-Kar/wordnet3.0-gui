@@ -6,6 +6,14 @@ from nltk.corpus import wordnet as wn
 # nltk.download("averaged_perceptron_tagger")
 # nltk.download("punkt")
 
+pos_map = {
+    "n": "noun",
+    "v": "verb",
+    "a": "adjective",
+    "s": "adjective satellite",
+    "r": "adverb"
+}
+
 def get_word_info(word):
     """
     Extracts all possible details about a word using WordNet and returns it as structured data.
@@ -22,7 +30,7 @@ def get_word_info(word):
             "synset": syn.name(),
             "definition": syn.definition(),
             "examples": syn.examples() if syn.examples() else None,
-            "part_of_speech": syn.pos(),
+            "part_of_speech": pos_map.get(syn.pos(), syn.pos()),
             "lemmas": [lemma.name() for lemma in syn.lemmas()],
             "antonyms": list({ant.name() for lemma in syn.lemmas() for ant in lemma.antonyms()}),
             "hypernyms": [h.name().split('.')[0] for h in syn.hypernyms()],
@@ -238,4 +246,83 @@ def get_hyponym_tree_data_text(synset_name):
             hyponym_tree(hyponym.name(), depth + 1)
 
     hyponym_tree(synset_name)
+    return tree_text
+
+
+
+
+def get_meronym_tree_data(synset_id, nodes=None, edges=None, visited=None, depth=0):
+    """
+    Recursively builds a meronym tree from the given synset.
+    Includes part, member, and substance meronyms.
+    """
+    if nodes is None:
+        nodes = []
+    if edges is None:
+        edges = []
+    if visited is None:
+        visited = set()
+
+    if synset_id in visited:
+        return nodes, edges
+
+    visited.add(synset_id)
+    synset = wn.synset(synset_id)
+
+    # Add current node
+    nodes.append({
+        'data': {
+            'id': synset_id,
+            'label': synset_id,
+            'definition': synset.definition(),
+            'depth': depth
+        }
+    })
+
+    # Explore all types of meronyms
+    meronym_types = [
+        ("part_meronyms", synset.part_meronyms()),
+        ("member_meronyms", synset.member_meronyms()),
+        ("substance_meronyms", synset.substance_meronyms())
+    ]
+
+    for label, meronyms in meronym_types:
+        for meronym in meronyms:
+            meronym_id = meronym.name()
+            edges.append({
+                'data': {
+                    'source': synset_id,
+                    'target': meronym_id,
+                    'label': label.replace("_", " ")
+                }
+            })
+            get_meronym_tree_data(meronym_id, nodes, edges, visited, depth + 1)
+
+    return nodes + edges
+
+def get_meronym_tree_data_text(synset_name):
+    """
+    Recursively builds a meronym tree as text (indented format).
+    Includes part, member, and substance meronyms.
+    """
+    tree_text = ""
+
+    def recurse(synset_name, depth=0):
+        nonlocal tree_text
+        synset = wn.synset(synset_name)
+        indent = "  " * depth
+        tree_text += f"{indent}↳ {synset.name()} ({synset.definition()})\n"
+
+        # Define types of meronyms
+        meronym_types = [
+            ("part", synset.part_meronyms()),
+            ("member", synset.member_meronyms()),
+            ("substance", synset.substance_meronyms())
+        ]
+
+        for relation, meronyms in meronym_types:
+            for meronym in meronyms:
+                recurse(meronym.name(), depth + 1)
+
+    recurse(synset_name)
     return tree_text

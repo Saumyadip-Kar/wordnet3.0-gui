@@ -58,6 +58,16 @@ async def get_hyponym_tree_text(data: TextInput):
     return {"TreeInfo": get_hyponym_tree_data_text(data.text)}
 
 
+#  Meronym Tree
+@app.post("/Meronym-Tree")
+async def get_meronym_tree(data: TextInput):
+    return {"KG": get_meronym_tree_data(data.text)}
+
+@app.post("/Meronym-Tree-Text")
+async def get_meronym_tree_text(data: TextInput):
+    return {"TreeInfo": get_meronym_tree_data_text(data.text)}
+
+
 # Load words into memory once
 with open("./assets/wordnet_words.txt", "r") as file:
     WORDS = [line.strip() for line in file]

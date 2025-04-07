@@ -39,6 +39,12 @@ class Graph1 extends React.Component {
       layout.maximalAdjustments = 1,
       nodeBGColor = "#00ddff";
     }
+    if(type=="meronym-tree"){
+      layout.name = "breadthfirst";
+      layout.spacingFactor = 1,
+      layout.maximalAdjustments = 1,
+      nodeBGColor = "#ff8324";
+    }
     return (
       <CytoscapeComponent
         elements={elements}
