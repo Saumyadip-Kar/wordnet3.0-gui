@@ -1,10 +1,11 @@
-import { FaRegCircle } from "react-icons/fa"; // Import an icon for N/A
+//DefinitionList.jsx
 
 
-export default function DefinitionList({ word, info, type="all-info" }) {
+export default function DefinitionList({ word, info, type="all-info", treeInfo="NA" }) {
   console.log("Dbg: checking in the list:", info)
   const parsedInfo = Array.isArray(info) ? info : [info];
 
+  
   if(type=="all-info")
     return (
       <div className="h-[91%] p-4 bg-gray-800 rounded-md min-h-20 overflow-auto">
@@ -54,4 +55,55 @@ export default function DefinitionList({ word, info, type="all-info" }) {
         </ul>
       </div>
     );
+  
+  //Plain text based view, doesn't have any problem
+    if(type=="text"){
+    return (
+      <div className="h-[91%] p-4 bg-gray-800 rounded-md min-h-20 overflow-auto">
+        <textarea
+          readOnly
+          wrap="off"
+          value={String(treeInfo)}
+          className="w-full h-full bg-gray-900 text-white p-2 rounded-md resize-none overflow-auto font-mono"
+        />
+      </div>
+    );
+  }
+
+  //Rich text has some indentation problem
+  // if (type === "text") {
+  //   const lines = String(treeInfo).split("\n");
+  //   return (
+  //     <div className="h-[91%] p-4 bg-gray-800 rounded-md min-h-20 overflow-x-auto overflow-y-auto">
+  //       <pre className="whitespace-pre font-mono text-sm text-white">
+  //         {lines.map((line, index) => {
+  //           const indentMatch = line.match(/^(\s*)/);
+  //           const indent = indentMatch ? indentMatch[1] : "";
+  
+  //           // Convert spaces to non-breaking spaces
+  //           const formattedIndent = indent.replace(/ /g, "\u00A0");
+  
+  //           const parts = line.trim().match(/^↳?\s*(.*?)\.(.*?)\s*\((.*)\)$/);
+  
+  //           if (parts) {
+  //             const [_, concept, sense, definition] = parts;
+  //             return (
+  //               <div key={index}>
+  //                 <span>{formattedIndent}</span>
+  //                 <span className="text-red-400">↳</span>
+  //                 <span className="text-cyan-400">{concept}</span>
+  //                 <span className="text-yellow-400">.{sense}</span>
+  //                 <span className="text-gray-200"> ({definition})</span>
+  //               </div>
+  //             );
+  //           } else {
+  //             return <div key={index}>{line}</div>;
+  //           }
+  //         })}
+  //       </pre>
+  //     </div>
+  //   );
+  // }
+  
+  
 }

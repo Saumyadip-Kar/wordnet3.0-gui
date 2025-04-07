@@ -14,6 +14,7 @@ import Header from './components/Header';
 function App() {
     const [word, setWord] = useState("");
     const [wordInfo, setWordInfo] = useState([]);  // ✅ Initialize as an empty array
+    const [treeInfo, setTreeInfo] = useState([]);  // ✅ Initialize as an empty array
     const [elements, setElements] = useState([]);  // ✅ Move elements state here
     const [nodes_len, setNodesLen] = useState(0);
     const [edges_len, setEdgesLen] = useState(0);
@@ -22,7 +23,7 @@ function App() {
     return (
         <div className="w-full h-full mx-auto flex-1 bg-gradient-to-br from-gray-900 via-blue-900 to-gray-800 text-white">
             <div className="w-full h-full mx-auto">
-            <Header info={wordInfo} infoType={infoType} setInfoType={setInfoType} setWordInfo={setWordInfo} setNodesLen={setNodesLen} setEdgesLen={setEdgesLen}/>
+            <Header info={wordInfo} infoType={infoType} setInfoType={setInfoType} setWordInfo={setWordInfo} setNodesLen={setNodesLen} setEdgesLen={setEdgesLen} treeInfo={treeInfo} setTreeInfo={setTreeInfo}/>
 
 
                 {/* Search Bar */}
@@ -33,7 +34,7 @@ function App() {
                     {/* Left Panel (Word Definition & POS) */}
                     <div className="p-4 bg-gray-700 rounded-lg shadow-lg h-[70vh]">
                         <h2 className="text-xl font-bold">Senses of {word}</h2>
-                        <DefinitionList word={word} info={wordInfo} type={infoType}/>
+                        <DefinitionList word={word} info={wordInfo} type={infoType} treeInfo={treeInfo} setTreeInfo={setTreeInfo}/>
 
                         {/* Parts of Speech Section */}
                         {/* <h3 className="mt-4 text-lg font-semibold">Parts of Speech</h3>

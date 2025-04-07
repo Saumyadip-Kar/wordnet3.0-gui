@@ -5,7 +5,7 @@ import { createRoot } from 'react-dom/client'; // 👈 use this, not ReactDOM.re
 import React from 'react';
 import Graph1 from "./Graph1";
 
-export default function MenuButton({ info, infoType, setInfoType, setWordInfo, setNodesLen, setEdgesLen }) {
+export default function MenuButton({ info, infoType, setInfoType, setWordInfo, setNodesLen, setEdgesLen, treeInfo, setTreeInfo }) {
 
   console.log("Dbg: checking in the menubutton:", info)
   const [open, setOpen] = useState(false);
@@ -53,10 +53,7 @@ export default function MenuButton({ info, infoType, setInfoType, setWordInfo, s
                       key={index}
                       className="p-2 hover:bg-lime-400/70 cursor-pointer"
                       onClick={async () => {
-                        //setWordInfo(item.synset);
-                        // setInfoType("hypernym-tree");
-                        // setOpen(false);
-                        // setSubmenuOpen(false);
+                         //Creating node based hyper-tree
                         try {
                           console.log(item.synset)
                           const response = await axios.post("http://localhost:8000/Hypernym-Tree", { text: item.synset });
@@ -70,15 +67,30 @@ export default function MenuButton({ info, infoType, setInfoType, setWordInfo, s
                               root.render(
                                 React.createElement(Graph1, { elements: response.data.KG, type:"hypernym-tree", word: item, setNodesLen: setNodesLen, setEdgesLen: setEdgesLen })
                               );
-                    
-                    
-                        }
+                            }
                           } else {
                             console.log("No hypernym tree found");
                           }
                           console.log("Response", response.data.KG);
                         } catch (error) {
                           console.error("Hypernym tree cannot be loaded", error);
+                        }
+
+                         //Creating text based hyper-tree
+                        try {
+                          console.log(item.synset)
+                          const response = await axios.post("http://localhost:8000/Hypernym-Tree-Text", { text: item.synset });
+                          
+                          if (response.data.TreeInfo) {
+                           setInfoType("text")
+                           setTreeInfo([response.data.TreeInfo]);
+                            
+                          } else {
+                            console.log("No hypernym tree found");
+                          }
+                          console.log(response.data.TreeInfo);
+                        } catch (error) {
+                          console.error("Hypernym tree text data cannot be loaded", error);
                         }
                       }}
                     >
@@ -103,6 +115,7 @@ export default function MenuButton({ info, infoType, setInfoType, setWordInfo, s
                       key={index}
                       className="p-2 hover:bg-amber-400/70 cursor-pointer"
                       onClick={async () => {
+                        //Creating node based hyper tree
                         try {
                           console.log(item.synset);
                           const response = await axios.post("http://localhost:8000/Hyponym-Tree", { text: item.synset });
@@ -126,6 +139,22 @@ export default function MenuButton({ info, infoType, setInfoType, setWordInfo, s
                           console.log("Response", response.data.KG);
                         } catch (error) {
                           console.error("Hyponym tree cannot be loaded", error);
+                        }
+
+                        //Creating text based hypo-tree
+                        try {
+                          const response = await axios.post("http://localhost:8000/Hyponym-Tree-Text", { text: item.synset });
+                          
+                          if (response.data.TreeInfo) {
+                           setInfoType("text")
+                           setTreeInfo([response.data.TreeInfo]);
+                            
+                          } else {
+                            console.log("No hyponym tree found");
+                          }
+                          console.log(response.data.TreeInfo);
+                        } catch (error) {
+                          console.error("Hyponym tree text data cannot be loaded", error);
                         }
                       }}
                     >
