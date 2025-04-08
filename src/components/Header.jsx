@@ -18,7 +18,7 @@ const Header = ({ info, infoType, setInfoType, setWordInfo, setNodesLen, setEdge
               <div className="text-sm ml-auto mt-2 sm:mt-0">
                 Made by <span className="font-medium">Saumyadip</span> ·{" "}
                 <a
-                  href="https://github.com/yourusername/your-repo"
+                  href="https://github.com/Saumyadip-Kar/wordnet3.0-gui"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="underline hover:text-blue-400 transition"
