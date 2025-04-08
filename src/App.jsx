@@ -10,8 +10,9 @@ import SearchBar from "./components/SearchBar";
 import DefinitionList from "./components/DefinitionList";
 import ThemeToggle from "./components/ThemeToggle";
 import Header from './components/Header';
+import Spinner from './components/Spinner';
 
-
+import { useRef} from 'react';
 
 function App() {
     const [word, setWord] = useState("");
@@ -21,19 +22,33 @@ function App() {
     const [nodes_len, setNodesLen] = useState(0);
     const [edges_len, setEdgesLen] = useState(0);
     const [infoType, setInfoType] = useState("all-info");
+    const [loading, setLoading] = useState(false); //To show the spinner while loading
+    const cyRef = useRef(null);
+
   
 
     return (
+        <>
+        {loading && <Spinner />}
         <div className="w-full h-full mx-auto flex-1 bg-gradient-to-br from-gray-900 via-blue-900 to-gray-800 text-white">
+            
+
             <div className="w-full h-full mx-auto">
             {/* {loading && <Spinner />} */}
             
-            <Header info={wordInfo} infoType={infoType} setInfoType={setInfoType} setWordInfo={setWordInfo} setNodesLen={setNodesLen} setEdgesLen={setEdgesLen} treeInfo={treeInfo} setTreeInfo={setTreeInfo} />
+            <Header info={wordInfo} infoType={infoType} setInfoType={setInfoType} setWordInfo={setWordInfo} 
+            setNodesLen={setNodesLen} setEdgesLen={setEdgesLen} treeInfo={treeInfo} setTreeInfo={setTreeInfo} 
+            setLoading={setLoading} cyRef={cyRef}/>
 
 
                 {/* Search Bar */}
-                <SearchBar setWord={setWord} word={word} setWordInfo={setWordInfo} setInfoType={setInfoType} setElements={setElements} setNodesLen={setNodesLen} setEdgesLen={setEdgesLen} />
-
+                <SearchBar setWord={setWord} word={word} 
+                setWordInfo={setWordInfo} setInfoType={setInfoType} 
+                setElements={setElements} setNodesLen={setNodesLen} 
+                setEdgesLen={setEdgesLen} setLoading={setLoading}
+                cyRef={cyRef}/>
+                
+                
                 {/* Layout Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6 ">
                     {/* Left Panel (Word Definition & POS) */}
@@ -58,6 +73,7 @@ function App() {
                 </div>
             </div>
         </div>
+        </>
     );
 }
 

@@ -12,7 +12,7 @@ export default function ThemeToggle() {
   }, [darkMode]);
 
   return (
-    <div className="flex justify-end p-2">
+    <div className="flex justify-end p-2 flex-shrink-0">
       <button
         className="px-4 py-2 bg-gray-700 rounded-md"
         onClick={() => setDarkMode(!darkMode)}

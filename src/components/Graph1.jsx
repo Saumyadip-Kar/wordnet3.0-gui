@@ -2,10 +2,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import CytoscapeComponent from 'react-cytoscapejs';
+import { useRef, useEffect } from 'react';
+
+import cytoscape from 'cytoscape';
+import svg from 'cytoscape-svg';
+
+svg(cytoscape); // Register the plugin ✅
+
 
 class Graph1 extends React.Component {
   render() {
-    const { elements, type = "KG", word = "default", setNodesLen, setEdgesLen } = this.props;
+    const { elements, type = "KG", word = "default", setNodesLen, setEdgesLen, cyRef } = this.props;
     const nodes = elements.filter(ele => !ele.data.source);
     const edges = elements.filter(ele => ele.data.source);
     setNodesLen(nodes.length);
@@ -51,6 +58,11 @@ class Graph1 extends React.Component {
         style={{ width: "100%", height: "100%", }}
         layout={layout}
         wheelSensitivity={0.2}
+        cy={(cy) => {
+          if (cyRef) {
+            cyRef.current = cy;
+          }
+        }}
         stylesheet={[
           {
             selector: "node",

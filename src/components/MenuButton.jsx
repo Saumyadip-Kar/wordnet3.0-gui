@@ -5,7 +5,7 @@ import { createRoot } from 'react-dom/client'; // 👈 use this, not ReactDOM.re
 import React from 'react';
 import Graph1 from "./Graph1";
 
-export default function MenuButton({ info, infoType, setInfoType, setWordInfo, setNodesLen, setEdgesLen, treeInfo, setTreeInfo }) {
+export default function MenuButton({ info, infoType, setInfoType, setWordInfo, setNodesLen, setEdgesLen, treeInfo, setTreeInfo, setLoading, cyRef }) {
 
   console.log("Dbg: checking in the menubutton:", info)
   const [open, setOpen] = useState(false);
@@ -26,14 +26,28 @@ export default function MenuButton({ info, infoType, setInfoType, setWordInfo, s
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  const downloadBlob = (blob, filename) => {
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    setTimeout(() => {
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }, 100); // Give the browser some time
+  };
+  
   
   return (
-    <div className="relative" ref={menuRef}>
+    <div className="relative flex-shrink-0" ref={menuRef}>
       <button
         onClick={() => setOpen(!open)}
-        className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-md"
+        className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-md justify-end"
       >
-        Menu
+        ☰ Menu
       </button>
       
       {open && (
@@ -55,6 +69,7 @@ export default function MenuButton({ info, infoType, setInfoType, setWordInfo, s
                       className="p-2 hover:bg-lime-400/70 cursor-pointer"
                       onClick={async () => {
                          //Creating node based hyper-tree
+                        setLoading(true);
                         try {
                           console.log(item.synset)
                           const response = await axios.post("http://localhost:8000/Hypernym-Tree", { text: item.synset });
@@ -66,7 +81,7 @@ export default function MenuButton({ info, infoType, setInfoType, setWordInfo, s
                             if (container) {
                               const root = createRoot(container);  // ✅ this is new in React 18
                               root.render(
-                                React.createElement(Graph1, { elements: response.data.KG, type:"hypernym-tree", word: item, setNodesLen: setNodesLen, setEdgesLen: setEdgesLen })
+                                React.createElement(Graph1, { elements: response.data.KG, type:"hypernym-tree", word: item, setNodesLen: setNodesLen, setEdgesLen: setEdgesLen, cyRef:cyRef })
                               );
                             }
                           } else {
@@ -93,6 +108,7 @@ export default function MenuButton({ info, infoType, setInfoType, setWordInfo, s
                         } catch (error) {
                           console.error("Hypernym tree text data cannot be loaded", error);
                         }
+                        setLoading(false);
                       }}
                     >
                       {item.synset}
@@ -114,8 +130,9 @@ export default function MenuButton({ info, infoType, setInfoType, setWordInfo, s
                   {info.map((item, index) => (
                     <li
                       key={index}
-                      className="p-2 hover:bg-amber-400/70 cursor-pointer"
+                      className="p-2 hover:bg-cyan-300/70 cursor-pointer"
                       onClick={async () => {
+                        setLoading(true); //Show the spinner during fetching
                         //Creating node based hyper tree
                         try {
                           console.log(item.synset);
@@ -130,7 +147,8 @@ export default function MenuButton({ info, infoType, setInfoType, setWordInfo, s
                                   type: "hyponym-tree",
                                   word: item,
                                   setNodesLen: setNodesLen,
-                                  setEdgesLen: setEdgesLen
+                                  setEdgesLen: setEdgesLen,
+                                  cyRef: cyRef
                                 })
                               );
                             }
@@ -157,6 +175,7 @@ export default function MenuButton({ info, infoType, setInfoType, setWordInfo, s
                         } catch (error) {
                           console.error("Hyponym tree text data cannot be loaded", error);
                         }
+                        setLoading(false); //Hide the spinner when data is fetched
                       }}
                     >
                       {item.synset}
@@ -181,6 +200,7 @@ export default function MenuButton({ info, infoType, setInfoType, setWordInfo, s
                       key={index}
                       className="p-2 hover:bg-amber-400/70 cursor-pointer"
                       onClick={async () => {
+                        setLoading(true);
                         //Creating node based hyper tree
                         try {
                           console.log(item.synset);
@@ -195,7 +215,8 @@ export default function MenuButton({ info, infoType, setInfoType, setWordInfo, s
                                   type: "meronym-tree",
                                   word: item,
                                   setNodesLen: setNodesLen,
-                                  setEdgesLen: setEdgesLen
+                                  setEdgesLen: setEdgesLen,
+                                  cyRef: cyRef
                                 })
                               );
                             }
@@ -222,6 +243,7 @@ export default function MenuButton({ info, infoType, setInfoType, setWordInfo, s
                         } catch (error) {
                           console.error("Meronym tree text data cannot be loaded", error);
                         }
+                        setLoading(false);
                       }}
                     >
                       {item.synset}
@@ -232,18 +254,64 @@ export default function MenuButton({ info, infoType, setInfoType, setWordInfo, s
             </li>
 
             <li
-              className="p-2 hover:bg-sky-400/60 cursor-pointer text-base text-left rounded-xl"
-              onClick={() => {
-                setInfoType("similarity");
+            className="p-2 hover:bg-sky-400/60 cursor-pointer text-base text-left rounded-xl"
+            onClick={() => {
+              setLoading(true);
+              try {
+                if (infoType === "text") {
+                  const textData = treeInfo.join("\n");
+                  const blob = new Blob([textData], { type: "text/plain" });
+                  downloadBlob(blob, "tree_info.txt");
+                } else if (infoType === "all-info") {
+                  const jsonData = JSON.stringify(info, null, 2);
+                  const blob = new Blob([jsonData], { type: "application/json" });
+                  downloadBlob(blob, "info.json");
+                } else {
+                  console.warn("Unsupported infoType:", infoType);
+                }
+            
+                // Export graph SVG
+                if (cyRef.current && typeof cyRef.current.svg === "function") {
+                  // Store previous styles to restore later if needed
+                  const originalEdgeStyles = cyRef.current.edges().map(edge => ({
+                    edge,
+                    style: edge.style()
+                  }));
+
+                  // Temporarily set edge color to aqua
+                  cyRef.current.edges().style({
+                    'line-color': 'aqua',
+                    'target-arrow-color': 'aqua',
+                    'source-arrow-color': 'aqua' // Optional if you use source arrows
+                  });
+
+                  // Export SVG
+                  const svgContent = cyRef.current.svg({ scale: 1, full: true });
+
+                  // Restore original edge styles
+                  originalEdgeStyles.forEach(({ edge, style }) => edge.style(style));
+                  const svgBlob = new Blob([svgContent], { type: "image/svg+xml;charset=utf-8" });
+                  downloadBlob(svgBlob, "graph.svg");
+                } else {
+                  console.warn("Cytoscape instance or svg plugin not available.");
+                }
+              } catch (error) {
+                console.error("Export failed:", error);
+              } finally {
+                setLoading(false);
                 setOpen(false);
-              }}
-            >
-              Export Data
-            </li>
+              }
+            }}
+            
+            
+          >
+            Export Data
+          </li>
           </ul>
 
         </div>
       )}
     </div>
   );
+
 }

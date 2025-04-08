@@ -4,16 +4,17 @@ import { useState } from "react";
 import Graph1 from "./Graph1";
 import { createRoot } from 'react-dom/client'; // 👈 use this, not ReactDOM.render
 
+
 import React from 'react';
 
-export default function SearchBar({ word, setWord, setWordInfo, setInfoType, setElements, setNodesLen, setEdgesLen }) {
+export default function SearchBar({ word, setWord, setWordInfo, setInfoType, setElements, setNodesLen, setEdgesLen, setLoading, cyRef }) {
   const [input, setInput] = useState(word);
 
   const [suggestions, setSuggestions] = useState([]);
 
 
   const handleSearch = async () => {
-    
+    setLoading(true)
     //Fetching word info
     try {
       const response = await axios.post("http://localhost:8000/Info", {
@@ -41,7 +42,7 @@ export default function SearchBar({ word, setWord, setWordInfo, setInfoType, set
         if (container) {
           const root = createRoot(container);  // ✅ this is new in React 18
           root.render(
-            React.createElement(Graph1, { elements: responseKG.data.KG,type:"KG", word: input, setNodesLen: setNodesLen, setEdgesLen: setEdgesLen })
+            React.createElement(Graph1, { elements: responseKG.data.KG,type:"KG", word: input, setNodesLen: setNodesLen, setEdgesLen: setEdgesLen, cyRef:cyRef })
           );
 
 
@@ -53,6 +54,7 @@ export default function SearchBar({ word, setWord, setWordInfo, setInfoType, set
     } catch (error) {
       console.error("Knowledge Graph cannot be loaded", error);
     }
+    setLoading(false);
   };
   
     return (
