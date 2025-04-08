@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import axios from "axios";
 
 import './App.css';
-import Graph from "./components/Graph";
 import Graph1 from './components/Graph1';
 import SearchBar from "./components/SearchBar";
 import DefinitionList from "./components/DefinitionList";

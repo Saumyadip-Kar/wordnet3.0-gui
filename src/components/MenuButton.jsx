@@ -69,7 +69,7 @@ export default function MenuButton({ info, infoType, setInfoType, setWordInfo, s
                       className="p-2 hover:bg-lime-400/70 cursor-pointer"
                       onClick={async () => {
                          //Creating node based hyper-tree
-                        setLoading(true);
+                        // setLoading(true); //For showing the load screen spinner but will cause the submenu to disappear
                         try {
                           console.log(item.synset)
                           const response = await axios.post("http://localhost:8000/Hypernym-Tree", { text: item.synset });
@@ -108,7 +108,7 @@ export default function MenuButton({ info, infoType, setInfoType, setWordInfo, s
                         } catch (error) {
                           console.error("Hypernym tree text data cannot be loaded", error);
                         }
-                        setLoading(false);
+                        // setLoading(false);
                       }}
                     >
                       {item.synset}
@@ -132,7 +132,7 @@ export default function MenuButton({ info, infoType, setInfoType, setWordInfo, s
                       key={index}
                       className="p-2 hover:bg-cyan-300/70 cursor-pointer"
                       onClick={async () => {
-                        setLoading(true); //Show the spinner during fetching
+                        // setLoading(true); //Show the spinner during fetching
                         //Creating node based hyper tree
                         try {
                           console.log(item.synset);
@@ -175,7 +175,7 @@ export default function MenuButton({ info, infoType, setInfoType, setWordInfo, s
                         } catch (error) {
                           console.error("Hyponym tree text data cannot be loaded", error);
                         }
-                        setLoading(false); //Hide the spinner when data is fetched
+                        // setLoading(false); //Hide the spinner when data is fetched
                       }}
                     >
                       {item.synset}
@@ -200,7 +200,7 @@ export default function MenuButton({ info, infoType, setInfoType, setWordInfo, s
                       key={index}
                       className="p-2 hover:bg-amber-400/70 cursor-pointer"
                       onClick={async () => {
-                        setLoading(true);
+                        // setLoading(true);
                         //Creating node based hyper tree
                         try {
                           console.log(item.synset);
@@ -243,7 +243,7 @@ export default function MenuButton({ info, infoType, setInfoType, setWordInfo, s
                         } catch (error) {
                           console.error("Meronym tree text data cannot be loaded", error);
                         }
-                        setLoading(false);
+                        // setLoading(false);
                       }}
                     >
                       {item.synset}
@@ -280,9 +280,9 @@ export default function MenuButton({ info, infoType, setInfoType, setWordInfo, s
 
                   // Temporarily set edge color to aqua
                   cyRef.current.edges().style({
-                    'line-color': 'aqua',
-                    'target-arrow-color': 'aqua',
-                    'source-arrow-color': 'aqua' // Optional if you use source arrows
+                    'line-color': 'red',
+                    'target-arrow-color': 'red',
+                    //'source-arrow-color': 'aqua' // Optional if you use source arrows
                   });
 
                   // Export SVG
