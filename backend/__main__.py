@@ -1,5 +1,8 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+import os
 from pydantic import BaseModel
 import uvicorn
 from backend.operations import *
@@ -20,7 +23,21 @@ app.add_middleware(
 # async def read_message():
 #     return {"message": "Hello from FastAPI!"}
 
+# ---------- Serve React Frontend (production) ----------
+# frontend_dist = os.path.abspath(os.path.join(os.path.dirname(__file__), "../frontend/dist"))
 
+# # Mount assets (like /assets/*.js, *.css)
+# app.mount("/assets", StaticFiles(directory=os.path.join(frontend_dist, "assets")), name="assets")
+
+# # Catch-all route for frontend (SPA fallback)
+# @app.get("/{full_path:path}")
+# async def serve_spa(full_path: str):
+#     index_path = os.path.join(frontend_dist, "index.html")
+#     if os.path.exists(index_path):
+#         return FileResponse(index_path)
+#     return {"detail": "index.html not found"}
+
+#------------------------------------------------------------------------------------------------------------------
 # Request model
 class TextInput(BaseModel):
     text: str
@@ -81,6 +98,7 @@ async def get_suggestions(query: str):
 
 
 if __name__ == "__main__":
+    #uvicorn.run("backend.__main__:app", host="0.0.0.0", port=8000)
     uvicorn.run(app, host="localhost", port=8000)
 
 #To run the api backend -- python -m backend

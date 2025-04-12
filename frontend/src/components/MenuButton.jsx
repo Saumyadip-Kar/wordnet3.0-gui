@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { createRoot } from 'react-dom/client'; // 👈 use this, not ReactDOM.render
 import React from 'react';
 import Graph1 from "./Graph1";
-
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
 export default function MenuButton({ info, infoType, setInfoType, setWordInfo, setNodesLen, setEdgesLen, treeInfo, setTreeInfo, setLoading, cyRef }) {
 
   console.log("Dbg: checking in the menubutton:", info)
@@ -72,7 +72,7 @@ export default function MenuButton({ info, infoType, setInfoType, setWordInfo, s
                         // setLoading(true); //For showing the load screen spinner but will cause the submenu to disappear
                         try {
                           console.log(item.synset)
-                          const response = await axios.post("http://localhost:8000/Hypernym-Tree", { text: item.synset });
+                          const response = await axios.post(`${backendUrl}/Hypernym-Tree`, { text: item.synset });
                           
                           if (response.data.KG) {
                     
@@ -95,7 +95,7 @@ export default function MenuButton({ info, infoType, setInfoType, setWordInfo, s
                          //Creating text based hyper-tree
                         try {
                           console.log(item.synset)
-                          const response = await axios.post("http://localhost:8000/Hypernym-Tree-Text", { text: item.synset });
+                          const response = await axios.post(`${backendUrl}/Hypernym-Tree-Text`, { text: item.synset });
                           
                           if (response.data.TreeInfo) {
                            setInfoType("text")
@@ -136,7 +136,7 @@ export default function MenuButton({ info, infoType, setInfoType, setWordInfo, s
                         //Creating node based hyper tree
                         try {
                           console.log(item.synset);
-                          const response = await axios.post("http://localhost:8000/Hyponym-Tree", { text: item.synset });
+                          const response = await axios.post(`${backendUrl}/Hyponym-Tree`, { text: item.synset });
                           if (response.data.KG) {
                             const container = document.getElementById("graph-container");
                             if (container) {
@@ -162,7 +162,7 @@ export default function MenuButton({ info, infoType, setInfoType, setWordInfo, s
 
                         //Creating text based hypo-tree
                         try {
-                          const response = await axios.post("http://localhost:8000/Hyponym-Tree-Text", { text: item.synset });
+                          const response = await axios.post(`${backendUrl}/Hyponym-Tree-Text`, { text: item.synset });
                           
                           if (response.data.TreeInfo) {
                            setInfoType("text")
@@ -204,7 +204,7 @@ export default function MenuButton({ info, infoType, setInfoType, setWordInfo, s
                         //Creating node based hyper tree
                         try {
                           console.log(item.synset);
-                          const response = await axios.post("http://localhost:8000/Meronym-Tree", { text: item.synset });
+                          const response = await axios.post(`${backendUrl}/Meronym-Tree`, { text: item.synset });
                           if (response.data.KG) {
                             const container = document.getElementById("graph-container");
                             if (container) {
@@ -230,7 +230,7 @@ export default function MenuButton({ info, infoType, setInfoType, setWordInfo, s
 
                         //Creating text based hypo-tree
                         try {
-                          const response = await axios.post("http://localhost:8000/Meronym-Tree-Text", { text: item.synset });
+                          const response = await axios.post(`${backendUrl}/Meronym-Tree-Text`, { text: item.synset });
                           
                           if (response.data.TreeInfo) {
                            setInfoType("text")

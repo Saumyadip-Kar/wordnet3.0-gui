@@ -3,7 +3,7 @@ import axios from "axios";
 import { useState } from "react";
 import Graph1 from "./Graph1";
 import { createRoot } from 'react-dom/client'; // 👈 use this, not ReactDOM.render
-
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 import React from 'react';
 
@@ -17,7 +17,7 @@ export default function SearchBar({ word, setWord, setWordInfo, setInfoType, set
     setLoading(true)
     //Fetching word info
     try {
-      const response = await axios.post("http://localhost:8000/Info", {
+      const response = await axios.post(`${backendUrl}/Info`, {
         text: input,
       });
       setWord(input); // Update main word state
@@ -33,7 +33,7 @@ export default function SearchBar({ word, setWord, setWordInfo, setInfoType, set
 
     //Fetching Knowledge Graph -- look here
     try {
-      const responseKG = await axios.post("http://localhost:8000/KG", { text: input });
+      const responseKG = await axios.post(`${backendUrl}/KG`, { text: input });
       if (responseKG.data.KG) {
         //setElements(responseKG.data.KG);  // ✅ Now updates state in App.jsx
 
@@ -70,7 +70,7 @@ export default function SearchBar({ word, setWord, setWordInfo, setInfoType, set
           
             if (value.length > 1) { // Fetch suggestions only if length > 1
               try {
-                const response = await axios.get(`http://localhost:8000/suggestions?query=${value}`);
+                const response = await axios.get(`${backendUrl}/suggestions?query=${value}`);
                 setSuggestions(response.data.suggestions);
               } catch (error) {
                 console.error("Error fetching suggestions:", error);
